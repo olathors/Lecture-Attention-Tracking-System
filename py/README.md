@@ -33,5 +33,5 @@ The notebooks are also available online in Binder
 - [lab_01_numpy.ipynb][binder-part-1] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-1]
 - [lab_01_transformations.ipynb][binder-part-2] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-2]
 
-[binder-part-1]: https://mybinder.org/v2/gh/tek5030/lab_01/py?labpath=py%2Flab_01_numpy.ipynb
-[binder-part-2]: https://mybinder.org/v2/gh/tek5030/lab_01/py?labpath=py%2Flab_02_transformations.ipynb
+[binder-part-1]: https://mybinder.org/v2/gh/tek5030/lab_01/master?labpath=py%2Flab_01_numpy.ipynb
+[binder-part-2]: https://mybinder.org/v2/gh/tek5030/lab_01/master?labpath=py%2Flab_02_transformations.ipynb
