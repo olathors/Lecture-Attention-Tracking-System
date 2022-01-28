@@ -26,7 +26,10 @@ sudo apt install python3.8 python3.8-dev python3.8-distutils python3.8-venv
 ```
 
 ### Exercise notebooks
-Notebooks are also available online in Binder
+With PyCharm Professional you can run the notebooks from your IDE:\
+https://www.jetbrains.com/help/pycharm/jupyter-notebook-support.html
+
+The notebooks are also available online in Binder
 - [lab_01_numpy.ipynb][binder-part-1] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-1]
 - [lab_01_transformations.ipynb][binder-part-2] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-2]
 
