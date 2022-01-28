@@ -24,3 +24,11 @@ If you haven't completed [`lab_00`](../lab_00), here are the very basic packages
 ```bash
 sudo apt install python3.8 python3.8-dev python3.8-distutils python3.8-venv
 ```
+
+### Exercise notebooks
+Notebooks are also available online in Binder
+- [lab_01_numpy.ipynb][binder-part-1] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-1]
+- [lab_01_transformations.ipynb][binder-part-2] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-2]
+
+[binder-part-1]: https://mybinder.org/v2/gh/tek5030/lab_01/py?labpath=py%2Flab_01_numpy.ipynb
+[binder-part-2]: https://mybinder.org/v2/gh/tek5030/lab_01/py?labpath=py%2Flab_02_transformations.ipynb
