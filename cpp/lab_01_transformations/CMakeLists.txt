@@ -25,6 +25,10 @@ set_target_properties(${exe_name} PROPERTIES
   CXX_STANDARD 17
   )
 
+file(COPY img_grid.png
+  DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/
+)
+
 set(gcc_like_cxx "$<COMPILE_LANG_AND_ID:CXX,ARMClang,AppleClang,Clang,GNU,LCC>")
 set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
 
