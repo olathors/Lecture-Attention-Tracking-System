@@ -2,7 +2,7 @@ from conans import ConanFile, CMake
 
 class SolutionTransformations(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    requires = "opencv/4.5.5"
+    requires = "eigen/3.3.9", "opencv/4.5.5"
     generators = "cmake_find_package", "virtualrunenv"
     default_options = {
         "opencv:dnn": False,
