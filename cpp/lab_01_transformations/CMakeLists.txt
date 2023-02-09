@@ -34,7 +34,7 @@ set(msvc_cxx "$<COMPILE_LANG_AND_ID:CXX,MSVC>")
 
 target_compile_options(${exe_name} PRIVATE
   "$<${gcc_like_cxx}:$<BUILD_INTERFACE:-Wall;-Wextra;-Wpedantic;-Wshadow;-Wformat=2>>"
-  "$<${msvc_cxx}:$<BUILD_INTERFACE:-W4;-MD>>"
+  "$<${msvc_cxx}:$<BUILD_INTERFACE:-W4>>"
   )
 
 target_compile_definitions(${exe_name} PUBLIC
