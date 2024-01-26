@@ -18,13 +18,12 @@ When appropriate, take a look at [our proposed solution](https://github.com/tek5
 Please start the lab by going to the [first step](lab-guide/1-get-to-know-eigen.md).
 
 ## Prerequisites
-- [Ensure Conan is installed on your system](https://tek5030.github.io/tutorial/conan.html), unless you are not on a lab computer.
-- Install project dependencies using conan:
+- Eigen must be installed on your system. If you are on a lab computer, you are all set.
+
+   If your are on Ubuntu 22, but not on a lab computer, the following should be sufficient.
 
    ```bash
-   # git clone https://github.com/tek5030/lab-transformations.git
-   # cd lab-transformations/cpp
-
-   conan install . --install-folder=build --build=missing
+   sudo apt update
+   sudo apt install libeigen3-dev
    ```
-- When you configure the project in CLion, remember to set `build` as the _Build directory_, as described in [lab 0](https://github.com/tek5030/lab_00/blob/master/cpp/lab-guide/1-open-project-in-clion.md#6-configure-project).
+- We refer to [setup_scripts](https://github.com/tek5030/setup_scripts) and [lab 0](https://github.com/tek5030/lab_00/blob/master/cpp/lab-guide/1-open-project-in-clion.md#6-configure-project) as a general getting started-guide for the C++ labs on Ubuntu 22.04.
