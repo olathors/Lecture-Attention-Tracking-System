@@ -26,4 +26,4 @@ Please start the lab by going to the [first step](lab-guide/1-get-to-know-eigen.
    sudo apt update
    sudo apt install libeigen3-dev
    ```
-- We refer to [setup_scripts](https://github.com/tek5030/setup_scripts) and [lab 0](https://github.com/tek5030/lab_00/blob/master/cpp/lab-guide/1-open-project-in-clion.md#6-configure-project) as a general getting started-guide for the C++ labs on Ubuntu 22.04.
+- We refer to [setup_scripts](https://github.com/tek5030/setup_scripts) and [lab-introduction](https://github.com/tek5030/lab_00/blob/master/cpp/lab-guide/1-open-project-in-clion.md#6-configure-project) as a general getting started-guide for the C++ labs on Ubuntu 22.04.
