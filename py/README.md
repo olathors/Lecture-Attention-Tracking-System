@@ -20,18 +20,22 @@ Please start the lab by going through the [first step](lab_01_numpy.ipynb)
 
 ---
 
-If you haven't completed [`lab_00`](../lab_00), here are the very basic packages required to get started
+If you haven't completed [lab-introduction], here are the very basic packages required to get started
 ```bash
-sudo apt install python3.8 python3.8-dev python3.8-distutils python3.8-venv
+sudo apt update
+sudo apt install python3 python3-dev python3-distutils python3-venv python-is-python3
 ```
+
+[lab-introduction]: https://github.com/tek5030/lab-intro/tree/master/py
 
 ### Exercise notebooks
 With PyCharm Professional you can run the notebooks from your IDE:\
 https://www.jetbrains.com/help/pycharm/jupyter-notebook-support.html
 
 The notebooks are also available online in Binder
-- [lab_01_numpy.ipynb][binder-part-1] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-1]
-- [lab_01_transformations.ipynb][binder-part-2] [![Binder](https://mybinder.org/badge_logo.svg)][binder-part-2]
+- [lab_01_numpy.ipynb][binder-part-1] [![binder-badge]][binder-part-1]
+- [lab_01_transformations.ipynb][binder-part-2] [![binder-badge]][binder-part-2]
 
-[binder-part-1]: https://mybinder.org/v2/gh/tek5030/lab_01/master?labpath=py%2Flab_01_numpy.ipynb
-[binder-part-2]: https://mybinder.org/v2/gh/tek5030/lab_01/master?labpath=py%2Flab_02_transformations.ipynb
+[binder-badge]: https://mybinder.org/badge_logo.svg
+[binder-part-1]: https://mybinder.org/v2/gh/tek5030/lab-transformations/master?labpath=py%2Flab_01_numpy.ipynb
+[binder-part-2]: https://mybinder.org/v2/gh/tek5030/lab-transformations/master?labpath=py%2Flab_02_transformations.ipynb
