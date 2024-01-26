@@ -3,8 +3,8 @@ We will in this part of the lab go through the Eigen tutorial while trying out s
 
 This part uses the ```lab_01_eigen``` subproject.
 Open ```lab_01/lab_01_eigen/main.cpp``` in CLion.
-Also make sure that we are using the build configuration for this subproject.
-The build tab on the upper-right in CLion should look like this:
+Also make sure that we are using the Debug build configuration for this subproject.
+The build tab on the upper-right in CLion should look something like this:
 
 ![The build configuration for lab_01_eigen should be chosen](img/lab_01_eigen-build-config.png)
 
