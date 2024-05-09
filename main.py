@@ -7,4 +7,3 @@ if __name__ == "__main__":
         null, frame = cap.read()
         drowsy_bool = drowsy(frame=frame)
         print(drowsy_bool)
-    
