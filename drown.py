@@ -71,13 +71,13 @@ while True:
 
 		# CALCULATING THE ASPECT RATIO FOR LEFT 
 		# AND RIGHT EYE
-		right_Eye = Detect_Eye(rightEye)
-		left_Eye = Detect_Eye(leftEye)
-		Eye_Rat = (left_Eye+right_Eye)/2
+			right_Eye = Detect_Eye(rightEye)
+			left_Eye = Detect_Eye(leftEye)
+			Eye_Rat = (left_Eye+right_Eye)/2
 
-		# NOW ROUND OF THE VALUE OF AVERAGE MEAN 
-		# OF RIGHT AND LEFT EYES
-		Eye_Rat = round(Eye_Rat, 2)
+			# NOW ROUND OF THE VALUE OF AVERAGE MEAN 
+			# OF RIGHT AND LEFT EYES
+			Eye_Rat = round(Eye_Rat, 2)
 
 		# THIS VALUE OF 0.25 (YOU CAN EVEN CHANGE IT) 
 		# WILL DECIDE WHETHER THE PERSONS'S EYES ARE CLOSE OR NOT
