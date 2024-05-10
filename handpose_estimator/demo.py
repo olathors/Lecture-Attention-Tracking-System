@@ -274,7 +274,7 @@ if __name__ == '__main__':
     backend_id = backend_target_pairs[args.backend_target][0]
     target_id = backend_target_pairs[args.backend_target][1]
     # palm detector
-    palm_detector = MPPalmDet(modelPath='../palm_detection_mediapipe/palm_detection_mediapipe_2023feb.onnx',
+    palm_detector = MPPalmDet(modelPath='palm_detection_mediapipe_2023feb.onnx',
                               nmsThreshold=0.3,
                               scoreThreshold=0.6,
                               backendId=backend_id,
