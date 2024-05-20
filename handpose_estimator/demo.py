@@ -41,6 +41,8 @@ parser.add_argument('--save', '-s', action='store_true',
                     help='Specify to save results. This flag is invalid when using camera.')
 parser.add_argument('--vis', '-v', action='store_true',
                     help='Specify to open a window for result visualization. This flag is invalid when using camera.')
+parser.add_argument('--required_fingers', '-rf', type=int, default=5,
+                    help='Number of fingers required to stop the loop.')
 args = parser.parse_args()
 
 
@@ -120,7 +122,7 @@ def visualize(image, hands, print_result=False):
         # draw handedness
         cv.putText(display_screen, '{}'.format(handedness_text), (bbox[0], bbox[1] + 12), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
         # draw gesture
-        cv.putText(display_screen, '{}'.format(gesture), (bbox[0], bbox[1] + 30), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
+        #cv.putText(display_screen, '{}'.format(gesture), (bbox[0], bbox[1] + 30), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
         # Draw line between each key points
         landmarks_xy = landmarks_screen[:, 0:2]
         draw_lines(display_screen, landmarks_xy, is_draw_point=False)
@@ -131,6 +133,7 @@ def visualize(image, hands, print_result=False):
             r = min(r, 14)
             cv.circle(display_screen, np.array([p[0], p[1]]), r, (0, 0, 255), -1)
 
+        #3D handpose demo visualization    
         if is_draw is False:
             is_draw = True
             # Main view
@@ -155,9 +158,12 @@ def visualize(image, hands, print_result=False):
             landmarks_zy = (landmarks_zy * 1000 + np.array([300, 300])).astype(np.int32)
             draw_lines(display_3d, landmarks_zy, thickness=5)
 
-    return display_screen, display_3d
-
+    return display_screen, display_3d, gc.num_fingers
+ 
 class GestureClassification:
+    def __init__(self):
+        self.num_fingers = 0
+
     def _vector_2_angle(self, v1, v2):
         uv1 = v1 / np.linalg.norm(v1)
         uv2 = v2 / np.linalg.norm(v2)
@@ -268,6 +274,7 @@ class GestureClassification:
     def classify(self, landmarks):
         hand = landmarks[:21, :2]
         gesture = self._classify(hand)
+        self.num_fingers = sum(self._finger_status(hand))
         return gesture
 
 if __name__ == '__main__':
@@ -300,7 +307,7 @@ if __name__ == '__main__':
             if handpose is not None:
                 hands = np.vstack((hands, handpose))
         # Draw results on the input image
-        image, view_3d = visualize(image, hands, True)
+        image, view_3d, num_fingers = visualize(image, hands, True)
 
         if len(palms) == 0:
             print('No palm detected!')
@@ -342,7 +349,7 @@ if __name__ == '__main__':
                     hands = np.vstack((hands, handpose))
             tm.stop()
             # Draw results on the input image
-            frame, view_3d = visualize(frame, hands)
+            frame, view_3d, num_fingers = visualize(frame, hands)
 
             if len(palms) == 0:
                 print('No palm detected!')
@@ -353,3 +360,10 @@ if __name__ == '__main__':
             cv.imshow('MediaPipe Handpose Detection Demo', frame)
             cv.imshow('3D HandPose Demo', view_3d)
             tm.reset()
+
+            if num_fingers == args.required_fingers:
+                print(f'{args.required_fingers} fingers detected, exiting.')
+                break
+
+            if cv.waitKey(1) == 27:  # ESC key to exit
+                break
