@@ -9,5 +9,7 @@ def distracted(frame, gaze):
         return True        
     elif gaze.is_left():
         return True 
+    elif gaze.is_up():
+        return True
     else:
         return False
