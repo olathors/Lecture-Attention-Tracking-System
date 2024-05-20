@@ -7,11 +7,6 @@ from calibration import Calibration
 
 
 class GazeTracking(object):
-    """
-    This class tracks the user's gaze.
-    It provides useful information like the position of the eyes
-    and pupils and allows to know if the eyes are open or closed
-    """
 
     def __init__(self):
         self.frame = None
@@ -19,17 +14,17 @@ class GazeTracking(object):
         self.eye_right = None
         self.calibration = Calibration()
 
-        # _face_detector is used to detect faces
+        #We use this model to detect the face.
         self._face_detector = dlib.get_frontal_face_detector()
 
-        # _predictor is used to get facial landmarks of a given face
+        #The predictor gives us 68 facial landmarks to use.
         cwd = os.path.abspath(os.path.dirname(__file__))
-        model_path = os.path.abspath(os.path.join(cwd, "trained_models/shape_predictor_68_face_landmarks.dat"))
+        model_path = os.path.abspath(os.path.join(cwd, "shape_predictor_68_face_landmarks.dat"))
         self._predictor = dlib.shape_predictor(model_path)
 
     @property
     def pupils_located(self):
-        """Check that the pupils have been located"""
+        #Here we check that the pupils have been located
         try:
             int(self.eye_left.pupil.x)
             int(self.eye_left.pupil.y)
@@ -40,7 +35,7 @@ class GazeTracking(object):
             return False
 
     def _analyze(self):
-        """Detects the face and initialize Eye objects"""
+        #Here we detect the face and initialize the Eye objects
         frame = cv2.cvtColor(self.frame, cv2.COLOR_BGR2GRAY)
         faces = self._face_detector(frame)
 
@@ -54,23 +49,20 @@ class GazeTracking(object):
             self.eye_right = None
 
     def refresh(self, frame):
-        """Refreshes the frame and analyzes it.
+        #Refreshes the frame and analyzes it.
 
-        Arguments:
-            frame (numpy.ndarray): The frame to analyze
-        """
         self.frame = frame
         self._analyze()
 
     def pupil_left_coords(self):
-        """Returns the coordinates of the left pupil"""
+        #Returns the coordinates of the left pupil
         if self.pupils_located:
             x = self.eye_left.origin[0] + self.eye_left.pupil.x
             y = self.eye_left.origin[1] + self.eye_left.pupil.y
             return (x, y)
 
     def pupil_right_coords(self):
-        """Returns the coordinates of the right pupil"""
+        #Returns the coordinates of the right pupil
         if self.pupils_located:
             x = self.eye_right.origin[0] + self.eye_right.pupil.x
             y = self.eye_right.origin[1] + self.eye_right.pupil.y
@@ -99,23 +91,22 @@ class GazeTracking(object):
     def is_right(self):
         """Returns true if the user is looking to the right"""
         if self.pupils_located:
-            return self.horizontal_ratio() <= 0.35
+            return self.horizontal_ratio() <= 0.45
 
     def is_left(self):
         """Returns true if the user is looking to the left"""
         if self.pupils_located:
             return self.horizontal_ratio() >= 0.65
-
-    def is_center(self):
-        """Returns true if the user is looking to the center"""
+        
+    def is_up(self):
+        """Returns true if the user is looking up"""
         if self.pupils_located:
-            return self.is_right() is not True and self.is_left() is not True
-
-    def is_blinking(self):
-        """Returns true if the user closes his eyes"""
+            return self.vertical_ratio() <= 0.60
+        
+    def is_down(self):
+        """Returns true if the user is looking down"""
         if self.pupils_located:
-            blinking_ratio = (self.eye_left.blinking + self.eye_right.blinking) / 2
-            return blinking_ratio > 3.8
+            return self.vertical_ratio() >= 0.85
 
     def annotated_frame(self):
         """Returns the main frame with pupils highlighted"""
