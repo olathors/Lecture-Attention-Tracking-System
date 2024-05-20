@@ -11,5 +11,7 @@ def distracted(frame, gaze):
         return True 
     elif gaze.is_up():
         return True
+    elif gaze.is_down():
+        return True
     else:
         return False

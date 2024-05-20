@@ -101,7 +101,12 @@ class GazeTracking(object):
     def is_up(self):
         """Returns true if the user is looking up"""
         if self.pupils_located:
-            return self.vertical_ratio() <= 0.55
+            return self.vertical_ratio() <= 0.60
+        
+    def is_down(self):
+        """Returns true if the user is looking down"""
+        if self.pupils_located:
+            return self.vertical_ratio() >= 0.85
 
     def annotated_frame(self):
         """Returns the main frame with pupils highlighted"""
