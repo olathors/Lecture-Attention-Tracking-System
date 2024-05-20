@@ -3,3 +3,4 @@ ipykernel
 jupyter
 pyyaml
 requests
+moviepy
