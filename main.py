@@ -13,13 +13,13 @@ commands = {
 
 
 if __name__ == "__main__":
-    cap = cv2.VideoCapture(0)
     lecture_file = "introduction_deep_learning_2023.mp4"
     gaze = GazeTracking()
     counter = 0
     sec_per_loop = 0.1
     process = subprocess.Popen(commands["start"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
+        cap = cv2.VideoCapture(0)
         while counter < 50:
             # 1. Setup the timing: https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/exponentially-weighted-moving-average-ewma/
             # 2. Start the video player
@@ -40,6 +40,8 @@ if __name__ == "__main__":
             if remaining_time > 0:
                 time.sleep(remaining_time)
 
+        cap.release()
+        cv2.destroyAllWindows()
         process = subprocess.Popen(commands["pause"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # pauses the video
         # starts the code for the handpose estimator 
