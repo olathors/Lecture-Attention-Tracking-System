@@ -7,7 +7,7 @@ import cv2
 from gaze_tracking import GazeTracking
 
 gaze = GazeTracking()
-webcam = cv2.VideoCapture(0)
+webcam = cv2.VideoCapture(1)
 
 while True:
     # We get a new frame from the webcam
@@ -25,8 +25,11 @@ while True:
         text = "Looking right"
     elif gaze.is_left():
         text = "Looking left"
+    elif gaze.is_up():
+        text = "Looking up"
     elif gaze.is_center():
         text = "Looking center"
+
 
     cv2.putText(frame, text, (90, 60), cv2.FONT_HERSHEY_DUPLEX, 1.6, (147, 58, 31), 2)
 
