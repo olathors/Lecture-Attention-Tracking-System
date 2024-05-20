@@ -5,7 +5,7 @@ from gaze_tracking import GazeTracking
 import time
 import subprocess
 commands = {
-    "start":"cvlc",
+    "start":"cvlc introduction_deep_learning_2023.mp4",
     "pause":"dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2   org.mpris.MediaPlayer2.Player.PlayPause",
     "play":"dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2   org.mpris.MediaPlayer2.Player.Play",
     "stop":"dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2   org.mpris.MediaPlayer2.Player.Stop"
