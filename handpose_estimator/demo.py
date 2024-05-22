@@ -1,14 +1,17 @@
 import sys
+import os
 import argparse
 
 import numpy as np
 import cv2 as cv
 
+
+#sys.path.append(os.path.abspath('../handpose_detection_mediapipe'))
 from mp_handpose import MPHandPose
+#print(sys.path)
 
 sys.path.append('../palm_detection_mediapipe')
 from mp_palmdet import MPPalmDet
-
 # Check OpenCV version
 assert cv.__version__ >= "4.9.0", \
        "Please install latest opencv-python to try this demo: python3 -m pip install --upgrade opencv-python"
@@ -21,32 +24,26 @@ backend_target_pairs = [
     [cv.dnn.DNN_BACKEND_TIMVX,  cv.dnn.DNN_TARGET_NPU],
     [cv.dnn.DNN_BACKEND_CANN,   cv.dnn.DNN_TARGET_NPU]
 ]
-
-parser = argparse.ArgumentParser(description='Hand Pose Estimation from MediaPipe')
-parser.add_argument('--input', '-i', type=str,
-                    help='Path to the input image. Omit for using default camera.')
-parser.add_argument('--model', '-m', type=str, default='./handpose_estimation_mediapipe_2023feb.onnx',
-                    help='Path to the model.')
-parser.add_argument('--backend_target', '-bt', type=int, default=0,
-                    help='''Choose one of the backend-target pair to run this demo:
-                        {:d}: (default) OpenCV implementation + CPU,
-                        {:d}: CUDA + GPU (CUDA),
-                        {:d}: CUDA + GPU (CUDA FP16),
-                        {:d}: TIM-VX + NPU,
-                        {:d}: CANN + NPU
-                    '''.format(*[x for x in range(len(backend_target_pairs))]))
-parser.add_argument('--conf_threshold', type=float, default=0.9,
-                    help='Filter out hands of confidence < conf_threshold.')
-parser.add_argument('--save', '-s', action='store_true',
-                    help='Specify to save results. This flag is invalid when using camera.')
-parser.add_argument('--vis', '-v', action='store_true',
-                    help='Specify to open a window for result visualization. This flag is invalid when using camera.')
-parser.add_argument('--required_fingers', '-rf', type=int, default=9,
-                    help='Number of fingers required to stop the loop.')
-parser.add_argument('--required_hand', '-rh', type=str, default='both', choices=['left', 'right', 'both'],
-                    help='Hand required to stop the loop.')
-args = parser.parse_args()
-
+def parse_arguments():
+    parser = argparse.ArgumentParser(description='Hand Pose Estimation from MediaPipe')
+    parser.add_argument('--model', '-m', type=str, default='./handpose_estimation_mediapipe_2023feb.onnx',
+                        help='Path to the model.')
+    parser.add_argument('--backend_target', '-bt', type=int, default=0,
+                        help='''Choose one of the backend-target pair to run this demo:
+                            {:d}: (default) OpenCV implementation + CPU,
+                            {:d}: CUDA + GPU (CUDA),
+                            {:d}: CUDA + GPU (CUDA FP16),
+                            {:d}: TIM-VX + NPU,
+                            {:d}: CANN + NPU
+                        '''.format(*[x for x in range(len(backend_target_pairs))]))
+    parser.add_argument('--conf_threshold', type=float, default=0.9,
+                        help='Filter out hands of confidence < conf_threshold.')
+    
+    parser.add_argument('--required_fingers', '-rf', type=int, default=9,
+                        help='Number of fingers required to stop the loop.')
+    parser.add_argument('--required_hand', '-rh', type=str, default='both', choices=['left', 'right', 'both'],
+                        help='Hand required to stop the loop.')
+    return parser.parse_args()
 
 def visualize(image, hands, gc, print_result=False):
     display_screen = image.copy()
@@ -268,11 +265,14 @@ class GestureClassification:
         gesture = self._classify(hand)
         return gesture
 
-if __name__ == '__main__':
+def handpose_estimation(args):
+#if __name__ == '__main__':
     backend_id = backend_target_pairs[args.backend_target][0]
     target_id = backend_target_pairs[args.backend_target][1]
     # palm detector
-    palm_detector = MPPalmDet(modelPath='palm_detection_mediapipe_2023feb.onnx',
+    path = os.getcwd()
+    print(path)
+    palm_detector = MPPalmDet(modelPath='./palm_detection_mediapipe_2023feb.onnx',
                               nmsThreshold=0.3,
                               scoreThreshold=0.6,
                               backendId=backend_id,
@@ -285,80 +285,52 @@ if __name__ == '__main__':
     
     gc = GestureClassification()
 
-    # If input is an image
-    if args.input is not None:
-        image = cv.imread(args.input)
+    #Removed the possibility to use images
+    deviceId = 0
+    cap = cv.VideoCapture(deviceId)
+
+    tm = cv.TickMeter()
+    while cv.waitKey(1) < 0:
+        hasFrame, frame = cap.read()
+        if not hasFrame:
+            print('No frames grabbed!')
+            break
 
         # Palm detector inference
-        palms = palm_detector.infer(image)
+        palms = palm_detector.infer(frame)
         hands = np.empty(shape=(0, 132))
-        
 
+        tm.start()
         # Estimate the pose of each hand
         for palm in palms:
             # Handpose detector inference
-            handpose = handpose_detector.infer(image, palm)
+            handpose = handpose_detector.infer(frame, palm)
             if handpose is not None:
                 hands = np.vstack((hands, handpose))
+        tm.stop()
         # Draw results on the input image
-        image, view_3d, num_fingers = visualize(image, hands, gc, True)
+        frame, view_3d, detected_fingers = visualize(frame, hands, gc)
 
         if len(palms) == 0:
             print('No palm detected!')
         else:
             print('Palm detected!')
+            cv.putText(frame, 'FPS: {:.2f}'.format(tm.getFPS()), (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
-        # Save results
-        if args.save:
-            cv.imwrite('result.jpg', image)
-            print('Results saved to result.jpg\n')
+        cv.imshow('MediaPipe Handpose Detection Demo', frame)
+        #cv.imshow('3D HandPose Demo', view_3d)
+        tm.reset()
+        total_fingers = detected_fingers['left'] + detected_fingers['right']
+        if (args.required_hand == 'left' and detected_fingers['left'] == args.required_fingers) or \
+            (args.required_hand == 'right' and detected_fingers['right'] == args.required_fingers) or \
+            total_fingers == args.required_fingers and detected_fingers['left'] <= 5 and detected_fingers['right'] <= 5:
+            print(f'{args.required_fingers} fingers detected on {args.required_hand} hand(s), exiting.')
+            cap.release()
+            cv.destroyAllWindows()
+            break
+        if cv.waitKey(1) == 27:  # ESC key to exit
+            break
 
-        # Visualize results in a new window
-        if args.vis:
-            cv.namedWindow(args.input, cv.WINDOW_AUTOSIZE)
-            cv.imshow(args.input, image)
-            cv.imshow('3D HandPose Demo', view_3d)
-            cv.waitKey(0)
-    else:  # Omit input to call default camera
-        deviceId = 0
-        cap = cv.VideoCapture(deviceId)
-
-        tm = cv.TickMeter()
-        while cv.waitKey(1) < 0:
-            hasFrame, frame = cap.read()
-            if not hasFrame:
-                print('No frames grabbed!')
-                break
-
-            # Palm detector inference
-            palms = palm_detector.infer(frame)
-            hands = np.empty(shape=(0, 132))
-
-            tm.start()
-            # Estimate the pose of each hand
-            for palm in palms:
-                # Handpose detector inference
-                handpose = handpose_detector.infer(frame, palm)
-                if handpose is not None:
-                    hands = np.vstack((hands, handpose))
-            tm.stop()
-            # Draw results on the input image
-            frame, view_3d, detected_fingers = visualize(frame, hands, gc)
-
-            if len(palms) == 0:
-                print('No palm detected!')
-            else:
-                print('Palm detected!')
-                cv.putText(frame, 'FPS: {:.2f}'.format(tm.getFPS()), (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
-
-            cv.imshow('MediaPipe Handpose Detection Demo', frame)
-            cv.imshow('3D HandPose Demo', view_3d)
-            tm.reset()
-            total_fingers = detected_fingers['left'] + detected_fingers['right']
-            if (args.required_hand == 'left' and detected_fingers['left'] == args.required_fingers) or \
-               (args.required_hand == 'right' and detected_fingers['right'] == args.required_fingers) or \
-               total_fingers == args.required_fingers and detected_fingers['left'] <= 5 and detected_fingers['right'] <= 5:
-                print(f'{args.required_fingers} fingers detected on {args.required_hand} hand(s), exiting.')
-                break
-            if cv.waitKey(1) == 27:  # ESC key to exit
-                break
+if __name__ == '__main__':
+    args = parse_arguments()
+    handpose_estimation(args)

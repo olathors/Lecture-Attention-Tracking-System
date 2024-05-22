@@ -2,8 +2,20 @@ from drowsy_function import drowsy
 from distracted_function import distracted
 import cv2
 from gaze_tracking import GazeTracking
+import argparse
+import os
+import sys
 import time
 import subprocess
+from contextlib import contextmanager
+
+script_dir = os.path.dirname(__file__)
+handpose_estimator_path = os.path.join(script_dir, 'handpose_estimator')
+sys.path.append(handpose_estimator_path)
+from handpose_estimator.demo import parse_arguments, handpose_estimation
+
+
+
 commands = {
     "start":"cvlc introduction_deep_learning_2023.mp4",
     "pause":"dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2   org.mpris.MediaPlayer2.Player.PlayPause",
@@ -11,6 +23,15 @@ commands = {
     "stop":"dbus-send --type=method_call --dest=org.mpris.MediaPlayer2.vlc /org/mpris/MediaPlayer2   org.mpris.MediaPlayer2.Player.Stop"
 }
 
+
+@contextmanager
+def change_dir(destination):
+    current_dir = os.getcwd()
+    os.chdir(destination)
+    try:
+        yield
+    finally:
+        os.chdir(current_dir)
 
 if __name__ == "__main__":
     lecture_file = "introduction_deep_learning_2023.mp4"
@@ -45,7 +66,11 @@ if __name__ == "__main__":
         process = subprocess.Popen(commands["pause"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         # pauses the video
         # starts the code for the handpose estimator 
-        time.sleep(5)
+        #time.sleep(5)
+        print('try handpose')
+        with change_dir(handpose_estimator_path):
+            args = parse_arguments()
+            handpose_estimation(args)
         counter = 0
         # starts the video again
         process = subprocess.Popen(commands["play"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
