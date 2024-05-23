@@ -43,7 +43,7 @@ if __name__ == "__main__":
     sec_per_loop = 0.1
     process = subprocess.Popen(commands["start"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
-        cap = cv2.VideoCapture(0)
+        cap = cv2.VideoCapture(1)
         while counter < 50:
             # 1. Setup the timing: https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/exponentially-weighted-moving-average-ewma/
             # 2. Start the video player
@@ -52,8 +52,13 @@ if __name__ == "__main__":
             null, frame = cap.read()
             # True when the person is sleepy
             drowsy_bool = drowsy(frame=frame)
-            # distracted_bool = distracted(frame=frame, gaze=gaze)
-            distracted_bool = False
+            distracted_bool = distracted(frame=frame, gaze=gaze)
+
+            newframe = gaze.annotated_frame()
+            cv2.imshow("Demo", newframe)
+            if cv2.waitKey(1) == 27:  # ESC key to exit
+                break
+
             if drowsy_bool or distracted_bool:
                 counter += 1
             elif counter > 0:
