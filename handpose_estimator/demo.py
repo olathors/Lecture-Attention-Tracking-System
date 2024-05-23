@@ -24,7 +24,7 @@ backend_target_pairs = [
     [cv.dnn.DNN_BACKEND_TIMVX,  cv.dnn.DNN_TARGET_NPU],
     [cv.dnn.DNN_BACKEND_CANN,   cv.dnn.DNN_TARGET_NPU]
 ]
-def parse_arguments():
+def parse_arguments(args=None):
     parser = argparse.ArgumentParser(description='Hand Pose Estimation from MediaPipe')
     parser.add_argument('--model', '-m', type=str, default='./handpose_estimation_mediapipe_2023feb.onnx',
                         help='Path to the model.')
@@ -43,7 +43,14 @@ def parse_arguments():
                         help='Number of fingers required to stop the loop.')
     parser.add_argument('--required_hand', '-rh', type=str, default='both', choices=['left', 'right', 'both'],
                         help='Hand required to stop the loop.')
-    return parser.parse_args()
+    
+    if args is not None:
+        parsed_args = parser.parse_args([])
+        for arg, value in vars(args).items():
+            setattr(parsed_args, arg, value)
+        return parsed_args
+    else:
+        return parser.parse_args()
 
 def visualize(image, hands, gc, print_result=False):
     display_screen = image.copy()
@@ -311,11 +318,10 @@ def handpose_estimation(args):
         # Draw results on the input image
         frame, view_3d, detected_fingers = visualize(frame, hands, gc)
 
-        if len(palms) == 0:
-            print('No palm detected!')
+        if args.required_hand == 'both':
+            cv.putText(frame, 'To resume the lecture, show a combined {} finger(s) from {} hands'.format(args.required_fingers, args.required_hand), (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
         else:
-            print('Palm detected!')
-            cv.putText(frame, 'FPS: {:.2f}'.format(tm.getFPS()), (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
+            cv.putText(frame, 'To resume the lecture, show {} finger(s) from the {} hand'.format(args.required_fingers, args.required_hand), (0, 15), cv.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255))
 
         cv.imshow('MediaPipe Handpose Detection Demo', frame)
         #cv.imshow('3D HandPose Demo', view_3d)

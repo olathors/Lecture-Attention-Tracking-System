@@ -6,6 +6,7 @@ import argparse
 import os
 import sys
 import time
+import random
 import subprocess
 from contextlib import contextmanager
 
@@ -34,6 +35,8 @@ def change_dir(destination):
         os.chdir(current_dir)
 
 if __name__ == "__main__":
+    hands = ['left', 'right', 'both']
+    
     lecture_file = "introduction_deep_learning_2023.mp4"
     gaze = GazeTracking()
     counter = 0
@@ -67,10 +70,17 @@ if __name__ == "__main__":
         # pauses the video
         # starts the code for the handpose estimator 
         #time.sleep(5)
-        print('try handpose')
+        
+        required_hand = random.SystemRandom().choice(hands)
+        if required_hand == 'both':
+            required_fingers = random.SystemRandom().randint(1, 10)
+        else:
+            required_fingers = random.SystemRandom().randint(1, 5)
+
+        args = argparse.Namespace(required_fingers=required_fingers, required_hand=required_hand)
         with change_dir(handpose_estimator_path):
-            args = parse_arguments()
-            handpose_estimation(args)
+            inputs = parse_arguments(args)
+            handpose_estimation(inputs)
         counter = 0
         # starts the video again
         process = subprocess.Popen(commands["play"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
