@@ -43,7 +43,7 @@ if __name__ == "__main__":
     sec_per_loop = 0.1
     process = subprocess.Popen(commands["start"], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     while True:
-        cap = cv2.VideoCapture(1)
+        cap = cv2.VideoCapture(0)
         while counter < 50:
             # 1. Setup the timing: https://corporatefinanceinstitute.com/resources/career-map/sell-side/capital-markets/exponentially-weighted-moving-average-ewma/
             # 2. Start the video player
