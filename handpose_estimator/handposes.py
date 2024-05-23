@@ -8,7 +8,6 @@ import cv2 as cv
 
 #sys.path.append(os.path.abspath('../handpose_detection_mediapipe'))
 from mp_handpose import MPHandPose
-#print(sys.path)
 
 sys.path.append('../palm_detection_mediapipe')
 from mp_palmdet import MPPalmDet
@@ -109,6 +108,7 @@ def visualize(image, hands, gc, print_result=False):
         gesture = gc.classify(landmarks_screen)
         num_fingers = gc.num_fingers
         detected_fingers[handedness_text.lower()] = num_fingers
+        
 
         if print_result:
             print(f'-----------hand {idx + 1}-----------')
@@ -327,10 +327,19 @@ def handpose_estimation(args):
         #cv.imshow('3D HandPose Demo', view_3d)
         tm.reset()
         total_fingers = detected_fingers['left'] + detected_fingers['right']
-        if (args.required_hand == 'left' and detected_fingers['left'] == args.required_fingers) or \
-            (args.required_hand == 'right' and detected_fingers['right'] == args.required_fingers) or \
-            total_fingers == args.required_fingers and detected_fingers['left'] <= 5 and detected_fingers['right'] <= 5:
-            print(f'{args.required_fingers} fingers detected on {args.required_hand} hand(s), exiting.')
+        if args.required_hand == 'both':
+                if total_fingers == args.required_fingers and detected_fingers['left'] <= 5 and detected_fingers['right'] <= 5:
+                    print(f'Total of {args.required_fingers} fingers detected, exiting.')
+                    cap.release()
+                    cv.destroyAllWindows()
+                    break
+        elif args.required_hand == 'left' and detected_fingers['left'] == args.required_fingers:
+            print(f'Total of {args.required_fingers} fingers detected on left hand, exiting.')
+            cap.release()
+            cv.destroyAllWindows()
+            break
+        elif args.required_hand == 'right' and detected_fingers['right'] == args.required_fingers:
+            print(f'Total of {args.required_fingers} fingers detected on right hand, exiting.')
             cap.release()
             cv.destroyAllWindows()
             break

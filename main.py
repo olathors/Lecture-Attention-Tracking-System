@@ -13,7 +13,7 @@ from contextlib import contextmanager
 script_dir = os.path.dirname(__file__)
 handpose_estimator_path = os.path.join(script_dir, 'handpose_estimator')
 sys.path.append(handpose_estimator_path)
-from handpose_estimator.demo import parse_arguments, handpose_estimation
+from handpose_estimator.handposes import parse_arguments, handpose_estimation
 
 
 
