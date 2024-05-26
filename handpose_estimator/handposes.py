@@ -54,35 +54,35 @@ def parse_arguments(args=None):
 def visualize(image, hands, gc, print_result=False):
     display_screen = image.copy()
     display_3d = np.zeros((400, 400, 3), np.uint8)
-    cv.line(display_3d, (200, 0), (200, 400), (255, 255, 255), 2)
-    cv.line(display_3d, (0, 200), (400, 200), (255, 255, 255), 2)
-    cv.putText(display_3d, 'Main View', (0, 12), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
-    cv.putText(display_3d, 'Top View', (200, 12), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
-    cv.putText(display_3d, 'Left View', (0, 212), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
-    cv.putText(display_3d, 'Right View', (200, 212), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
     is_draw = False  # ensure only one hand is drawn
 
+    #Drawing the line through the landmarks 
     def draw_lines(image, landmarks, is_draw_point=True, thickness=2):
+        #Thumb
         cv.line(image, landmarks[0], landmarks[1], (255, 255, 255), thickness)
         cv.line(image, landmarks[1], landmarks[2], (255, 255, 255), thickness)
         cv.line(image, landmarks[2], landmarks[3], (255, 255, 255), thickness)
         cv.line(image, landmarks[3], landmarks[4], (255, 255, 255), thickness)
 
+        #Index 
         cv.line(image, landmarks[0], landmarks[5], (255, 255, 255), thickness)
         cv.line(image, landmarks[5], landmarks[6], (255, 255, 255), thickness)
         cv.line(image, landmarks[6], landmarks[7], (255, 255, 255), thickness)
         cv.line(image, landmarks[7], landmarks[8], (255, 255, 255), thickness)
 
+        #Middle
         cv.line(image, landmarks[0], landmarks[9], (255, 255, 255), thickness)
         cv.line(image, landmarks[9], landmarks[10], (255, 255, 255), thickness)
         cv.line(image, landmarks[10], landmarks[11], (255, 255, 255), thickness)
         cv.line(image, landmarks[11], landmarks[12], (255, 255, 255), thickness)
 
+        #Ring
         cv.line(image, landmarks[0], landmarks[13], (255, 255, 255), thickness)
         cv.line(image, landmarks[13], landmarks[14], (255, 255, 255), thickness)
         cv.line(image, landmarks[14], landmarks[15], (255, 255, 255), thickness)
         cv.line(image, landmarks[15], landmarks[16], (255, 255, 255), thickness)
-
+        
+        #Pinky
         cv.line(image, landmarks[0], landmarks[17], (255, 255, 255), thickness)
         cv.line(image, landmarks[17], landmarks[18], (255, 255, 255), thickness)
         cv.line(image, landmarks[18], landmarks[19], (255, 255, 255), thickness)
@@ -95,7 +95,7 @@ def visualize(image, hands, gc, print_result=False):
     detected_fingers = {'left': 0, 'right': 0}
 
     for idx, handpose in enumerate(hands):
-        conf = handpose[-1]
+        conf = handpose[-1] #While currently not used, showing confidence might come in handy
         bbox = handpose[0:4].astype(np.int32)
         handedness = handpose[-2]
         if handedness <= 0.5:
@@ -109,20 +109,7 @@ def visualize(image, hands, gc, print_result=False):
         num_fingers = gc.num_fingers
         detected_fingers[handedness_text.lower()] = num_fingers
         
-
-        if print_result:
-            print(f'-----------hand {idx + 1}-----------')
-            print(f'conf: {conf:.2f}')
-            print(f'handedness: {handedness_text}')
-            print(f'gesture: {gesture}')
-            print(f'hand box: {bbox}')
-            print('hand landmarks: ')
-            for l in landmarks_screen:
-                print(f'\t{l}')
-            print('hand world landmarks: ')
-            for l in landmarks_word:
-                print(f'\t{l}')
-
+        #Drawing boundingbox around our hands
         cv.rectangle(display_screen, (bbox[0], bbox[1]), (bbox[2], bbox[3]), (0, 255, 0), 2)
         cv.putText(display_screen, f'{handedness_text}', (bbox[0], bbox[1] + 12), cv.FONT_HERSHEY_DUPLEX, 0.5, (0, 0, 255))
 
